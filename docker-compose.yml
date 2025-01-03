@@ -697,19 +697,6 @@ services:
     depends_on:
       - gvmd
       - ospd-openvas
-  # END GVM stack
-  fullscanner:
-    image: zaproxy/zap-stable
-    container_name: fullscanner
-    ports:
-      - "8080:8080"  # Exposes ZAP's API on port 8080 for host access (optional)
-    networks:
-      - zapnet
-      - default  # Join the default network
-    command: >
-      bash -c "zap.sh -daemon -host fullscanner -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$LICENSE_KEY -config http.timeout=60000"
-    environment:
-      LICENSE_KEY: "default-xx"
 
 
 
@@ -735,6 +722,4 @@ volumes:
   ospd_openvas_socket_vol:
   redis_socket_vol:
 
-networks:
-  zapnet:
-    driver: bridge
+
