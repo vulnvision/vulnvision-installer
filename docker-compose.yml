@@ -98,7 +98,7 @@ services:
     image: vulnvision/base:latest
     container_name: base_server
     restart: always
-    command: bash -c "sleep 10 && python manage.py migrate && python manage.py collectstatic --noinput  && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "sleep 10 && python manage.pyc migrate && python manage.pyc collectstatic --noinput  && python manage.pyc runserver 0.0.0.0:8000"
     env_file:
       - env_files/vulnvision.env
     ports:
@@ -271,7 +271,7 @@ services:
     image: vulnvision/base:latest
     container_name: base_server_consumer
     restart: always
-    command: bash -c "sleep 60 && python manage.py rabbitmq_consume"
+    command: bash -c "sleep 60 && python manage.pyc rabbitmq_consume"
     env_file:
       - env_files/vulnvision.env
     depends_on:
@@ -324,7 +324,7 @@ services:
     image: vulnvision/subdomains_scan:latest
     container_name: django_httpx_general_worker
     restart: always
-    command: bash -c "python manage.py migrate && celery -A django_httpx worker -Q general -E"
+    command: bash -c "python manage.pyc migrate && celery -A django_httpx worker -Q general -E"
     env_file:
       - env_files/httpx.env
     depends_on:
@@ -357,7 +357,7 @@ services:
     image: vulnvision/subdomains_scan:latest
     container_name: django_httpx_consumer
     restart: always
-    command: bash -c "sleep 60 && python manage.py rabbitmq_consume"
+    command: bash -c "sleep 60 && python manage.pyc rabbitmq_consume"
     env_file:
       - env_files/httpx.env
     depends_on:
@@ -405,7 +405,7 @@ services:
     image: vulnvision/network_scan:latest
     container_name: django_nmap_general_worker
     restart: always
-    command: bash -c "python manage.py migrate && celery -A django_nmap worker -Q general -E"
+    command: bash -c "python manage.pyc migrate && celery -A django_nmap worker -Q general -E"
     env_file:
       - env_files/nmap.env
     depends_on:
@@ -438,7 +438,7 @@ services:
     image: vulnvision/network_scan:latest
     container_name: django_nmap_consumer
     restart: always
-    command: bash -c "sleep 60 && python manage.py rabbitmq_consume"
+    command: bash -c "sleep 60 && python manage.pyc rabbitmq_consume"
     env_file:
       - env_files/nmap.env
     depends_on:
@@ -486,7 +486,7 @@ services:
     image: vulnvision/lite_scan:latest
     container_name: django_nuclei_general_worker
     restart: always
-    command: bash -c "python manage.py migrate && celery -A django_nuclei worker -Q general -E"
+    command: bash -c "python manage.pyc migrate && celery -A django_nuclei worker -Q general -E"
     env_file:
       - env_files/nuclei.env
     depends_on:
@@ -519,7 +519,7 @@ services:
     image: vulnvision/lite_scan:latest
     container_name: django_nuclei_consumer
     restart: always
-    command: bash -c "sleep 60 && python manage.py rabbitmq_consume"
+    command: bash -c "sleep 60 && python manage.pyc rabbitmq_consume"
     env_file:
       - env_files/nuclei.env
     depends_on:
