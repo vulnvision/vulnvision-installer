@@ -36,8 +36,8 @@ services:
     restart: always
     command: ["npm", "run", "start"]
     depends_on:
-      - django_httpx_postgres_db
-      - django_httpx_redis
+      - vulnvision_redis
+      - vulnvision_postgres_db
     labels:
       - com.centurylinklabs.watchtower.enable=true
     volumes:
@@ -364,9 +364,6 @@ volumes:
   dash_build:
   teams_build:
   vulnvision_op_postgres_db:
-  django_httpx_postgres_db:
-  django_nmap_postgres_db:
-  django_nuclei_postgres_db:
   gpg_data_vol:
   scap_data_vol:
   cert_data_vol:
