@@ -178,7 +178,7 @@ services:
 
 
   scanners:
-    image: vulnvision/scanners:main  # The tag you used when building your Docker image
+    image: vulnvision/scanners:latest  # The tag you used when building your Docker image
     ports:
       - "8080:8080"  # Map port 8080 on the host to port 8080 in the container
     volumes:
