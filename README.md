@@ -22,11 +22,11 @@ chmod +x vulnvision-installer
 ```
 
 ### 2. Install
-Run the installer (do **not** use sudo):
+Run the installer:
 ```bash
-./vulnvision-installer
+sudo ./vulnvision-installer
 ```
-*Follow the on-screen prompts for License Key, Server IP, Email, and Docker Hub Token.*
+*Follow the on-screen prompts for License Key, Server IP and Email*
 
 ## Maintenance & Operations
 
