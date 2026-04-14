@@ -15,19 +15,25 @@ def zap_started(zap, target):
     """
     print("[HOOK] zap_started: Starting endpoint discovery...")
 
-    # ========== Phase 0: Load header injection script ==========
-    print("[HOOK] Phase 0: Loading add_header_request script...")
-    try:
-        zap.script.load(
-        'add_header_request',                          # 1. script name
-        'httpsender',                                  # 2. script type
-        'jython',                                      # 3. engine
-        '/zap/wrk/scripts/add_header_request.py'       # 4. file path
-        )
-        zap.script.enable('add_header_request')
-        print("[HOOK] Phase 0: Script loaded and enabled")
-    except Exception as e:
-        print(f"[HOOK] Phase 0: Failed to load script: {e}")
+    # ========== Phase 0: Inject auth headers via replacer (no Jython needed) ==========
+    print("[HOOK] Phase 0: Configuring auth headers...")
+    header_count = 0
+    for key, value in os.environ.items():
+        if key.startswith("ZAP_AUTH_HEADER_"):
+            header_name = key[len("ZAP_AUTH_HEADER_"):]
+            try:
+                zap._request(
+                    zap.base + "replacer/action/addRule/",
+                    {"description": f"Auth-{header_name}", "enabled": "true",
+                     "matchType": "REQ_HEADER", "matchRegex": "false",
+                     "matchString": header_name, "replacement": value}
+                )
+                header_count += 1
+                print(f"[HOOK] Phase 0: Added header → {header_name}")
+            except Exception as e:
+                print(f"[HOOK] Phase 0: Failed to add header {header_name}: {e}")
+    if header_count == 0:
+        print("[HOOK] Phase 0: No ZAP_AUTH_HEADER_* env vars found")
 
     api_endpoints = set()
 
