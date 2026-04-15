@@ -35,6 +35,14 @@ def zap_started(zap, target):
     if header_count == 0:
         print("[HOOK] Phase 0: No ZAP_AUTH_HEADER_* env vars found")
 
+    # Build a requests-compatible headers dict from the same env vars so that
+    # Phase 2 and Phase 3's direct HTTP calls also carry auth credentials.
+    auth_headers = {
+        k[len("ZAP_AUTH_HEADER_"):]: v
+        for k, v in os.environ.items()
+        if k.startswith("ZAP_AUTH_HEADER_")
+    }
+
     api_endpoints = set()
 
     # ========== Phase 1: Read katana output file (if exists) ==========
@@ -63,7 +71,7 @@ def zap_started(zap, target):
     # ========== Phase 2: JS bundle endpoint extraction ==========
     try:
         print("[HOOK] Phase 2: Parsing JS bundles for API endpoints...")
-        resp = requests.get(target, timeout=10)
+        resp = requests.get(target, headers=auth_headers, timeout=10)
         html = resp.text
 
         js_files = list(set(
@@ -86,7 +94,7 @@ def zap_started(zap, target):
                 js_url = target.rstrip("/") + "/" + js_file
 
             try:
-                js_resp = requests.get(js_url, timeout=15)
+                js_resp = requests.get(js_url, headers=auth_headers, timeout=15)
                 if js_resp.status_code != 200:
                     continue
                 js_content = js_resp.text
@@ -164,7 +172,7 @@ def zap_started(zap, target):
         print("[HOOK] Phase 3: Checking for OpenAPI/Swagger specs...")
         for path in ["/swagger.json", "/openapi.json", "/api-docs", "/v2/api-docs", "/v3/api-docs", "/swagger/v1/swagger.json", "/.well-known/openapi.json"]:
             try:
-                r = requests.get(target.rstrip("/") + path, timeout=5)
+                r = requests.get(target.rstrip("/") + path, headers=auth_headers, timeout=5)
                 if r.status_code == 200 and ("openapi" in r.text.lower() or "swagger" in r.text.lower()):
                     spec = r.json()
                     for p in spec.get("paths", {}).keys():
