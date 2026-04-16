@@ -15,8 +15,23 @@ def zap_started(zap, target):
     """
     print("[HOOK] zap_started: Starting endpoint discovery...")
 
-    # ========== Phase 0: Inject auth headers via replacer (no Jython needed) ==========
-    print("[HOOK] Phase 0: Configuring auth headers...")
+    # ========== Phase 0: Auth headers + scope restriction ==========
+    print("[HOOK] Phase 0: Configuring auth headers and scope...")
+
+    # Build target URL regex for scoping (e.g. "http://example.com:8080" → "http://example\\.com:8080.*")
+    from urllib.parse import urlparse
+    parsed = urlparse(target)
+    target_regex = re.escape(parsed.scheme + "://" + parsed.netloc) + ".*"
+
+    # Restrict ZAP context to target domain only — prevents spider/scanner from going off-scope
+    try:
+        zap.context.include_in_context("Default Context", target_regex)
+        zap.context.exclude_from_context("Default Context", "(?:(?!%s).)*" % re.escape(parsed.netloc))
+        print(f"[HOOK] Phase 0: Scope restricted to {parsed.netloc}")
+    except Exception as e:
+        print(f"[HOOK] Phase 0: Scope restriction failed (non-fatal): {e}")
+
+    # Inject auth headers via replacer — scoped to target domain only (prevents token leak to external domains)
     header_count = 0
     for key, value in os.environ.items():
         if key.startswith("ZAP_AUTH_HEADER_"):
@@ -26,10 +41,11 @@ def zap_started(zap, target):
                     zap.base + "replacer/action/addRule/",
                     {"description": f"Auth-{header_name}", "enabled": "true",
                      "matchType": "REQ_HEADER", "matchRegex": "false",
-                     "matchString": header_name, "replacement": value}
+                     "matchString": header_name, "replacement": value,
+                     "url": target_regex}
                 )
                 header_count += 1
-                print(f"[HOOK] Phase 0: Added header → {header_name}")
+                print(f"[HOOK] Phase 0: Added header → {header_name} (scoped to {parsed.netloc})")
             except Exception as e:
                 print(f"[HOOK] Phase 0: Failed to add header {header_name}: {e}")
     if header_count == 0:
