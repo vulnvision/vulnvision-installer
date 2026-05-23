@@ -1,6 +1,6 @@
 # Vulnvision Installer
 
-The `vulnvision-installer` utility automates the setup, updates, and maintenance of the Vulnvision system.
+The `athinex-installer` utility automates the setup, updates, and maintenance of the Vulnvision system.
 
 ## Prerequisites
 
@@ -16,15 +16,15 @@ The `vulnvision-installer` utility automates the setup, updates, and maintenance
 
 ### 1. Setup
 ```bash
-git clone https://github.com/vulnvision/vulnvision-installer.git
-cd vulnvision-installer
-chmod +x vulnvision-installer
+git clone https://github.com/vulnvision/athinex-installer.git
+cd athinex-installer
+chmod +x athinex-installer
 ```
 
 ### 2. Install
 Run the installer:
 ```bash
-sudo ./vulnvision-installer
+sudo ./athinex-installer
 ```
 *Follow the on-screen prompts for License Key, Server IP and Email*
 
@@ -32,13 +32,14 @@ sudo ./vulnvision-installer
 
 | Task | Command | Description |
 |------|---------|-------------|
-| **Update System** | `./vulnvision-installer -pull`<br>`./vulnvision-installer -update` | Pulls latest code and updates the system. |
-| **Download Feeds** | `./vulnvision-installer -download-feeds` | Downloads enterprise feeds (Requires `LICENSE_KEY`). |
-| **Sync Feeds** | `./vulnvision-installer -sync-feed` | Manually syncs Vulnvision assessment feeds. |
-| **Reset Config** | `./vulnvision-installer -reset` | Resets system services and permissions. |
-| **Create Admin** | `./vulnvision-installer -create-user -email <email> -password <pass>` | Creates a new superuser manually. |
+| **Update System** | `./athinex-installer -pull`<br>`./athinex-installer -update` | Pulls latest code and updates the system. |
+| **Download Feeds** | `./athinex-installer -download-feeds` | Downloads enterprise feeds (Requires `LICENSE_KEY`). |
+| **Sync Feeds** | `./athinex-installer -sync-feed` | Manually syncs Vulnvision assessment feeds. |
+| **Reset Config** | `./athinex-installer -reset` | Resets system services and permissions. |
+| **Create Admin** | `./athinex-installer -create-user -email <email> -password <pass>` | Creates a new superuser manually. |
 
 ## Important Notes
 *   **Permissions**: The installer handles privilege escalation internally. You will be asked for your sudo password.
 *   **Default Password**: The default admin password is `Vulnvision2025`. **Change this immediately.**
 *   **Environment**: ensure `env_files/vulnvision.env` is populated if running without the interactive wizard.
+
